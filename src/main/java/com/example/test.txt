@@ -1,0 +1,152 @@
+./
+├── api
+│   ├── controller
+│   │   └── UserController.java
+│   └── model
+│       └── User.java
+├── service
+│   └── UserService.java
+└── SpringApiApplication.java
+
+4 directories, 4 files
+/* SpringApiApplication.java */
+package com.example.springapi;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringApiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringApiApplication.class, args);
+	}
+
+}
+/* UserController.java */
+package com.example.springapi.api.controller;
+
+import com.example.springapi.api.model.User;
+import com.example.springapi.service.UserService;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class UserController{
+
+	private final  UserService userService;
+	
+	@Autowired
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
+	
+	@GetMapping("/user")
+	public User getUser(@RequestParam Integer id) {
+		Optional<User> user =  userService.getUser(id);
+
+		
+		/*if(user.isPresent()) {
+			return (User) user.get();
+		}
+
+		return null;
+		*/
+		return  (User) user.orElse(null);
+	}
+	
+
+}/* User.java */
+package com.example.springapi.api.model;
+
+//package com.example.springapi.api.model;
+
+public class User{
+	private int id;
+	private String name;
+	private int age;
+	private String email;
+	
+	public User(int id, String name, int age, String email) {
+		this.id = id;
+		this.name=name;
+		this.age=age;
+		this.email=email;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name=name;
+	}
+
+	public int getAge(){
+		return age;
+	}
+	
+	public void setAge(int age) {
+		this.age=age;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+}/* UserService.java */
+package com.example.springapi.service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.springapi.api.model.User;
+
+@Service
+public class UserService{
+	private List<User> userList;
+	
+	public UserService() {
+		userList = new ArrayList<>();
+			User user1 = new  User(1,"Ida",32, "ida@mail.com" );		
+			User user2 = new  User(2,"Hans",26, "hans@mail.com" );		
+			User user3 = new  User(3,"Lars",45, "lars@mail.com" );
+			User user4 = new  User(4,"Ben",32, "ben@mail.com" );
+			User user5 = new  User(5,"Eva",59, "eva@mail.com" );
+
+			userList.addAll(Arrays.asList(user1,user2,user3,user4,user5));
+	}
+	
+	public Optional<User> getUser(Integer id) {
+		Optional<User> optional = Optional.empty();
+		/* 9min */
+		
+		for(User user:  userList ) {
+			if(id == user.getId()) {
+				optional = Optional.of(user);
+				return optional;
+			}
+		}
+		return optional;
+	}
+}
